@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>GitLab Board Manager</title>
+
+		<link rel="stylesheet" href="index.css" />
+	</head>
+
+	<body>
+		<div class="tabs">
+			<button class="tab-button" data-tab="dashboard">
+				📅 Dashboard
+			</button>
+
+			<button class="tab-button" data-tab="issues">📌 Issues</button>
+
+			<button id="git-comparer" data-tab="comparer">
+				<a
+					target="_blank"
+					href="file:///C:/PRIV/Projects/APP_TOOLS/git_comparator/git_comparator.html"
+					>⇹ Comparer</a
+				>
+			</button>
+
+			<button class="tab-button" data-tab="settings">
+				⚙️ Paramètres
+			</button>
+		</div>
+
+		<a id="help" target="_blank" href="TODO/README#utilisation">Aide</a>
+
+		<div class="tab-content" id="dashboard">
+			<div>
+				<h3>Créer un nouveau board</h3>
+
+				<input type="text" id="board-name" placeholder="Nom du board" />
+
+				<button
+					onclick="createBoard(document.getElementById('board-name').value)"
+				>
+					Créer un board
+				</button>
+			</div>
+
+			<br />
+
+			<div id="milestoneContainer">
+				<h3>📋 Liste des projets (milestone) par board</h3>
+
+				<div>
+					<label for="board-selector">Board</label>
+
+					<select
+						id="board-selector"
+						onchange="setBoardSelected(document.querySelector('#board-selector option:checked').value)"
+					></select>
+
+					<a id="board-link" target="_blank">Lien</a>
+				</div>
+
+				<div>
+					<input
+						type="text"
+						id="milestone-name"
+						placeholder="Nom du projet (Ex: QUAL_CORE)"
+					/>
+
+					<button
+						onclick="createMilestone(
+
+                    document.getElementById('board-selector').value,
+
+                    document.getElementById('milestone-name').value,
+
+                    document.getElementById('board-selector').querySelector('option:checked').text
+
+                )"
+					>
+						➕ Ajouter
+					</button>
+
+					<button
+						onclick="createMilestones(
+
+                    document.getElementById('board-selector').value,
+
+                    document.getElementById('board-selector').querySelector('option:checked').text
+
+                )"
+					>
+						➕ Ajouter les projets
+					</button>
+				</div>
+
+				<div class="table-scroll">
+					<table id="milestoneTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+
+								<th>Nom</th>
+
+								<th>Actions</th>
+							</tr>
+						</thead>
+
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+
+			<h3>📌 Ajout d'issues</h3>
+
+			<div class="wrapper">
+				<div id="multiSelectContainer">
+					<label for="issue-name">Nom de l'issue</label>
+
+					<br />
+
+					<input
+						type="text"
+						id="issue-name"
+						placeholder="Nom du SARA/RUBIS (Ex: RU547208 - SCA)"
+					/>
+
+					<br />
+
+					<div id="issue-priority">
+						<label>Priorité</label>
+
+						<input
+							type="radio"
+							name="priority"
+							value="priority::low"
+							checked
+						/>
+
+						<label for="low-priority">Faible</label>
+
+						<input
+							type="radio"
+							name="priority"
+							value="priority::medium"
+						/>
+
+						<label for="medium-priority">Moyenne</label>
+
+						<input
+							type="radio"
+							name="priority"
+							value="priority::high"
+						/>
+
+						<label for="high-priority">Haute</label>
+					</div>
+
+					<p style="width: 300px" for="issue-selector">
+						Choisir des projets (CTRL+click) :
+
+						<button id="reset-projects">Réinitialiser</button>
+					</p>
+
+					<select id="issue-selector" multiple></select>
+				</div>
+
+				<div>
+					<button id="issue-create">Créer l'issue</button>
+
+					<h3>
+						L'issue est crée dans les projets (milestone) suivants:
+					</h3>
+
+					<ul id="selectedValues"></ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-content" id="issues" style="display: none">
+			<h2>Issues</h2>
+
+			<p>
+				Board
+				<select
+					id="issue-board-selector"
+					onchange="setIssueBoardSelected(document.querySelector('#issue-board-selector option:checked').value)"
+				></select>
+			</p>
+
+			<p>
+				Milestone
+
+				<select
+					id="issue-milestone-selector"
+					onchange="setMilestoneSelected(document.querySelector('#issue-milestone-selector option:checked').value,
+
+                document.querySelector('#issue-milestone-selector option:checked').textContent)"
+				></select>
+			</p>
+
+			<table id="issue-list">
+				<thead>
+					<tr>
+						<th style="width: 37%">📌 Issue</th>
+
+						<th style="width: 12%">🧍 Assignation</th>
+
+						<th style="width: 8%">📂 Projet</th>
+
+						<th style="width: 25%">🌿 Branche</th>
+
+						<th style="width: 12%">🔀 Merge Request</th>
+
+						<th style="width: 5%">Actions</th>
+					</tr>
+				</thead>
+
+				<tbody></tbody>
+			</table>
+		</div>
+
+		<div class="tab-content" id="settings" style="display: none">
+			<h2>Paramètres</h2>
+
+			<label>Version : </label><span id="project-version"></span>
+
+			<a id="update-link" href=""
+				>Mettre à jour en version: <span id="new-version"></span
+			></a>
+
+			<br />
+
+			<label for="token-input">Saisir le token gitlab: </label>
+
+			<input type="text" id="token-input" />
+
+			<button id="save-params" onclick="saveToken()">Sauvegarder</button>
+
+			<br />
+
+			<a
+				target="_blank"
+				href="https://gitlab.cm-cic.fr/-/user_settings/personal_access_tokens"
+				>Générer son token gitlab</a
+			>
+
+			<br /><br />
+
+			<!-- Rounded switch -->
+
+			<label for="switch">Mode debug</label>
+
+			<label class="switch">
+				<input id="switch-debug" type="checkbox"
+				onclick="toggleDebug()"">
+
+				<span class="slider round"></span>
+			</label>
+
+			<br /><br /><br />
+		</div>
+
+		<div id="loader" style="display: none"></div>
+
+		<div id="toast-container"></div>
+
+		<div id="consoleLog"></div>
+
+		<script src="scripts/constants.js"></script>
+
+		<script src="scripts/config.js"></script>
+
+		<script src="scripts/parameters.js"></script>
+
+		<script src="scripts/toast.js"></script>
+
+		<script src="scripts/loader.js"></script>
+
+		<script src="scripts/utils.js"></script>
+
+		<script src="scripts/api.js"></script>
+
+		<script src="scripts/auth.js"></script>
+
+		<script src="scripts/board.js"></script>
+
+		<script src="scripts/milestones.js"></script>
+
+		<script src="scripts/console.js"></script>
+
+		<script src="scripts/issues.js"></script>
+
+		<script src="index.js"></script>
+	</body>
+</html>

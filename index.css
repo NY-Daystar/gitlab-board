@@ -1,0 +1,391 @@
+:root {
+	--slider-width: 16px;
+	--state-opened-color: #22ae22;
+	--state-merged-color: #9781f9;
+	--state-closed-color: #d95f5f;
+	--console-background-color: yellow;
+	--button-background-color: blue;
+}
+
+#help {
+	position: absolute;
+
+	right: 25px;
+
+	top: 25px;
+
+	font-size: 1.2em;
+}
+
+h3 {
+	margin-top: 5px;
+
+	margin-bottom: 5px;
+}
+
+.actions-cell {
+	text-align: center;
+}
+
+.table-scroll {
+	margin: 1em 0;
+
+	display: inline-block;
+
+	height: 15em;
+
+	overflow-y: scroll;
+}
+
+.table-scroll thead {
+	position: sticky;
+
+	top: 0;
+}
+
+.table-scroll tfoot {
+	position: sticky;
+
+	bottom: 0;
+}
+
+#issue-name {
+	width: 90%;
+}
+
+#issue-list {
+	width: 100%;
+}
+
+#issue-list th {
+	font-size: 0.9em;
+}
+
+#issue-list td {
+	text-align: center;
+}
+
+#board-link {
+	margin-left: 1em;
+
+	display: none;
+}
+
+#issue-priority {
+	margin-top: 15px;
+}
+
+#issue-priority > label:nth-child(1) {
+	margin-right: 15px;
+}
+
+#milestone-name {
+	width: 25%;
+}
+
+#consoleLog {
+	background-color: var(--console-background-color);
+
+	height: 150px;
+
+	width: 100%;
+
+	position: fixed;
+
+	bottom: 0;
+
+	left: 0;
+
+	overflow-y: scroll;
+}
+
+#project-version {
+	margin-left: 15px;
+}
+
+#token-input {
+	width: 350px;
+}
+
+.state-closed {
+	background-color: var(--state-closed-color) !important;
+
+	color: white;
+
+	font-weight: bold;
+}
+
+button.state-closed {
+	cursor: not-allowed !important;
+}
+
+.state-merged {
+	background-color: var(--state-merged-color);
+
+	color: white;
+
+	font-weight: bold;
+}
+
+.state-opened {
+	background-color: var(--state-opened-color) !important;
+
+	color: white;
+
+	font-weight: bold;
+}
+
+#update-link {
+	margin-left: 25px;
+
+	display: none;
+}
+
+table {
+	border-collapse: collapse;
+
+	margin-top: 10px;
+}
+
+th,
+td {
+	border: 1px solid #ddd;
+
+	padding: 8px;
+
+	text-align: left;
+}
+
+th {
+	background-color: #f4f4f4;
+
+	text-align: center;
+}
+
+/* The switch - the box around the slider */
+
+.switch {
+	position: relative;
+
+	display: inline-block;
+
+	width: 40px;
+
+	height: 24px;
+}
+
+.wrapper {
+	display: grid;
+
+	grid-template-columns: 300px 200px;
+}
+
+.wrapper > div:nth-child(2) {
+	margin-left: 400px;
+
+	width: 500px;
+}
+
+#multiSelectContainer > select {
+	width: 500px;
+
+	height: 200px;
+
+	padding: 5px;
+
+	font-size: 16px;
+}
+
+button:not(.delete-btn) {
+	margin-top: 10px;
+
+	padding: 5px 10px;
+
+	cursor: pointer;
+
+	font-size: 16px;
+
+	border: none;
+
+	background-color: var(--button-background-color);
+
+	color: white;
+
+	border-radius: 5px;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+	opacity: 0;
+
+	width: 0;
+
+	height: 0;
+}
+
+/* The slider */
+
+.slider {
+	position: absolute;
+
+	cursor: pointer;
+
+	top: 0;
+
+	left: 0;
+
+	right: 0;
+
+	bottom: 0;
+
+	background-color: #ccc;
+
+	-webkit-transition: 0.4s;
+
+	transition: 0.4s;
+}
+
+.slider:before {
+	position: absolute;
+
+	content: "";
+
+	height: var(--slider-width);
+
+	width: var(--slider-width);
+
+	left: 4px;
+
+	bottom: 4px;
+
+	background-color: white;
+
+	-webkit-transition: 0.4s;
+
+	transition: 0.4s;
+}
+
+input:checked + .slider {
+	background-color: #2196f3;
+}
+
+input:focus + .slider {
+	box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+	-webkit-transform: translateX(var(--slider-width));
+
+	-ms-transform: translateX(var(--slider-width));
+
+	transform: translateX(var(--slider-width));
+}
+
+/* Rounded sliders */
+
+.slider.round {
+	border-radius: 34px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+
+/** Toast */
+
+#toast-container {
+	position: fixed;
+
+	bottom: 20px;
+
+	right: 20px;
+
+	z-index: 9999;
+}
+
+#git-comparer a {
+	color: white;
+
+	text-decoration: none;
+}
+
+.toast {
+	background-color: #4caf50;
+
+	color: white;
+
+	padding: 12px 20px;
+
+	margin-top: 10px;
+
+	border-radius: 5px;
+
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+	animation: fadeInOut 4s ease forwards;
+
+	font-family: sans-serif;
+
+	min-width: 200px;
+}
+
+.toast-error {
+	background-color: #af4c4c;
+}
+
+@keyframes fadeInOut {
+	0% {
+		opacity: 0;
+
+		transform: translateY(20px);
+	}
+
+	10% {
+		opacity: 1;
+
+		transform: translateY(0);
+	}
+
+	90% {
+		opacity: 1;
+
+		transform: translateY(0);
+	}
+
+	100% {
+		opacity: 0;
+
+		transform: translateY(20px);
+	}
+}
+
+/** Loader */
+
+#loader {
+	position: absolute;
+
+	width: 80px;
+
+	height: 80px;
+
+	border: 4px solid #f3f3f3;
+
+	border-top: 4px solid #3498db;
+
+	border-radius: 50%;
+
+	animation: spin 1s linear infinite;
+
+	z-index: 9999;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
