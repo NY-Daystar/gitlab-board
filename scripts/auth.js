@@ -3,7 +3,7 @@
  */
 async function authenticate() {
 	try {
-		let response = await fetch(`${GITLAB_API}/user`, {
+		const response = await fetch(`${GITLAB_API}/user`, {
 			headers: { "Private-Token": config.token }
 		});
 
@@ -11,7 +11,7 @@ async function authenticate() {
 			throw new Error("Failed to authenticate to gitlab !");
 		}
 
-		let user = await response.json();
+		const user = await response.json();
 
 		logToConsole(`✅ Connected as ${user.username}`);
 

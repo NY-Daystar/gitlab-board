@@ -5,15 +5,11 @@
  */
 function extractProject(milestone) {
 	const regexp = /(.*)\s+-\s+.*/g;
-
-	try {
-		const matches = milestone.matchAll(regexp);
-		for (const match of matches) {
-			return match[1];
-		}
-	} catch (ex) {
-		return null;
+	const matches = milestone.matchAll(regexp);
+	for (const match of matches) {
+		return match[1];
 	}
+	return null;
 }
 
 /**
@@ -26,6 +22,7 @@ function extractProjectNameFromIssueUrl(url) {
 	for (const match of matches) {
 		return match[1];
 	}
+	return null;
 }
 
 /**
@@ -38,6 +35,7 @@ function extractProjectUrlFromIssueUrl(url) {
 	for (const match of matches) {
 		return match[1];
 	}
+	return null;
 }
 
 /**
@@ -45,11 +43,12 @@ function extractProjectUrlFromIssueUrl(url) {
  * @param {string} content
  */
 function extractBranchFromNote(content) {
-	const regexp = /\[`(.*)\`]/g;
+	const regexp = /\[(.*)\]/g;
 	const matches = content.matchAll(regexp);
 	for (const match of matches) {
 		return match[1];
 	}
+	return null;
 }
 
 /**
@@ -63,6 +62,7 @@ function extractVersion(content) {
 	for (const match of matches) {
 		return match[1];
 	}
+	return null;
 }
 
 /**
@@ -72,7 +72,8 @@ function extractVersion(content) {
  * @returns -1 v1<v2  | 1 si v1>v2  |  0 si v1=v2
  */
 function compareVersion(v1, v2) {
-	(v1parts = v1.split(".")), (v2parts = v2.split("."));
+	const v1parts = v1.split(".");
+	const v2parts = v2.split(".");
 
 	function isValidPart(x) {
 		return /^\d+[A-Za-z]*$/;
@@ -82,11 +83,11 @@ function compareVersion(v1, v2) {
 		return NaN;
 	}
 
-	for (var i = 0; i < v1parts.length; ++i) {
-		if (v2parts.length == i) {
+	for (let i = 0; i < v1parts.length; ++i) {
+		if (v2parts.length === i) {
 			return 1;
 		}
-		if (v1parts[i] == v2parts[i]) {
+		if (v1parts[i] === v2parts[i]) {
 			continue;
 		} else if (v1parts[i] > v2parts[i]) {
 			return 1;
@@ -95,9 +96,26 @@ function compareVersion(v1, v2) {
 		}
 	}
 
-	if (v1parts.length != v2parts.length) {
+	if (v1parts.length !== v2parts.length) {
 		return -1;
 	}
 
 	return 0;
+}
+
+/**
+ * Generate alert popup
+ * @param {string} msg message of the alert
+ */
+function customAlert(msg) {
+	alert(msg);
+}
+
+/**
+ * Generate confirm popup
+ * @param {string} msg message of the confirm
+ */
+function customConfirm(msg) {
+	const confirmed = confirm(msg);
+	return confirmed;
 }

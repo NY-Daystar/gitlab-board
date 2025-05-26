@@ -2,12 +2,11 @@
  *  Create board with its name
  * @param {string} boardName Board name
  */
-
 async function postBoard(boardName) {
 	const url = `${GITLAB_API}/groups/${GRP}/boards?name=${boardName}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "POST",
 
 			headers: { "Private-Token": config.token }
@@ -16,9 +15,8 @@ async function postBoard(boardName) {
 		return response;
 	} catch (error) {
 		logToConsole(`❌fetchBoard - Error : ${error.message}`);
-
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -29,20 +27,19 @@ async function fetchBoardById(id) {
 	const url = `${GITLAB_API}/groups/${GRP}/boards/${id}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			headers: { "Private-Token": config.token }
 		});
 
-		let board = await response.json();
+		const board = await response.json();
 
-		if (!board) return;
+		if (!board) return null;
 
 		return board;
 	} catch (error) {
 		logToConsole(`❌ Error : ${error.message}`);
-
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -53,18 +50,17 @@ async function fetchBoards() {
 	const url = `${GITLAB_API}/groups/${GRP}/boards`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			headers: { "Private-Token": config.token }
 		});
 
-		let res = await response.json();
+		const res = await response.json();
 
 		return res;
 	} catch (error) {
 		logToConsole(`❌fetchBoards - Error : ${error.message}`);
-
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -82,8 +78,8 @@ async function updateBoard(boardId) {
 		});
 	} catch (error) {
 		logToConsole(`❌ updateBoard - Error : ${error.message}`);
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -94,10 +90,10 @@ async function updateBoard(boardId) {
 */
 
 async function postMilestone(milestone) {
-	let url = `${GITLAB_API}/groups/${GRP}/milestones`;
+	const url = `${GITLAB_API}/groups/${GRP}/milestones`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "POST",
 
 			headers: {
@@ -109,7 +105,7 @@ async function postMilestone(milestone) {
 		});
 
 		if (response.ok) {
-			let result = await response.json();
+			const result = await response.json();
 
 			logToConsole(`🛠 Milestone '${milestone}' created.`);
 
@@ -120,6 +116,7 @@ async function postMilestone(milestone) {
 	} catch (error) {
 		logToConsole(`postMilestone - Exception raised: ${error}`);
 	}
+	return null;
 }
 
 /**
@@ -131,18 +128,18 @@ async function fetchMilestones(id) {
 	const url = `${GITLAB_API}/groups/${GRP}/boards/${id}/lists`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			headers: { "Private-Token": config.token }
 		});
 
-		let milestones = await response.json();
-		if (!milestones) return;
+		const milestones = await response.json();
+		if (!milestones) return null;
+
 		return milestones;
 	} catch (error) {
 		logToConsole(`❌ Erreur : ${error.message}`);
-
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -154,7 +151,7 @@ async function updateMilestone(boardId, milestoneId) {
 	const url = `${GITLAB_API}/groups/${GRP}/boards/${boardId}/lists?milestone_id=${milestoneId}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "POST",
 
 			headers: {
@@ -164,13 +161,14 @@ async function updateMilestone(boardId, milestoneId) {
 		});
 
 		if (response.ok) {
-			logToConsole(`🛠 Milestone associated to the board.`);
+			logToConsole("🛠 Milestone associated to the board.");
 		} else {
-			logToConsole(`❌ Failed association board/milestone`);
+			logToConsole("❌ Failed association board/milestone");
 		}
 	} catch (error) {
 		logToConsole(`updateMilestone - Exception raised: ${error}`);
 	}
+	return null;
 }
 
 /**
@@ -181,7 +179,7 @@ async function deleteMilestone(milestoneId) {
 	const url = `${GITLAB_API}/groups/${GRP}/milestones/${milestoneId}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "DELETE",
 
 			headers: {
@@ -198,6 +196,7 @@ async function deleteMilestone(milestoneId) {
 	} catch (error) {
 		logToConsole(`deleteMilestone - Exception raised: ${error}`);
 	}
+	return null;
 }
 
 /**
@@ -211,7 +210,7 @@ async function postIssue(projectId, issue, milestoneId, priority) {
 	const url = `${GITLAB_API}/projects/${projectId}/issues?title=${issue}&milestone_id=${milestoneId}&labels=${priority}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "POST",
 
 			headers: {
@@ -228,6 +227,7 @@ async function postIssue(projectId, issue, milestoneId, priority) {
 	} catch (error) {
 		logToConsole(`postIssue - Exception raised: ${error}`);
 	}
+	return null;
 }
 
 /**
@@ -236,22 +236,22 @@ async function postIssue(projectId, issue, milestoneId, priority) {
  */
 async function fetchIssues(milestoneName) {
 	try {
-		let response = await fetch(
+		const response = await fetch(
 			`${GITLAB_API}/issues?scope=all&milestone=${milestoneName}`,
 			{
 				headers: { "Private-Token": config.token }
 			}
 		);
 
-		let issues = await response.json();
+		const issues = await response.json();
 
-		if (!issues) return;
+		if (!issues) return null;
 
 		return issues;
 	} catch (error) {
 		logToConsole(`❌ fetchIssues - Error : ${error.message}`);
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -261,22 +261,22 @@ async function fetchIssues(milestoneName) {
  */
 async function fetchMergeRequestFromIssue(projectId, issueIid) {
 	try {
-		let response = await fetch(
+		const response = await fetch(
 			`${GITLAB_API}/projects/${projectId}/issues/${issueIid}/related_merge_requests`,
 			{
 				headers: { "Private-Token": config.token }
 			}
 		);
 
-		let mergeRequests = await response.json();
+		const mergeRequests = await response.json();
 
-		if (!mergeRequests) return;
+		if (!mergeRequests) return null;
 
 		return mergeRequests[0];
 	} catch (error) {
 		logToConsole(`❌ Error : ${error.message}`);
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -286,22 +286,22 @@ async function fetchMergeRequestFromIssue(projectId, issueIid) {
  */
 async function fetchNoteFromIssue(projectId, issueIid) {
 	try {
-		let response = await fetch(
+		const response = await fetch(
 			`${GITLAB_API}/projects/${projectId}/issues/${issueIid}/notes`,
 			{
 				headers: { "Private-Token": config.token }
 			}
 		);
 
-		let notes = await response.json();
+		const notes = await response.json();
 
-		if (!notes) return;
+		if (!notes) return null;
 
 		return notes[0];
 	} catch (error) {
 		logToConsole(`❌ fetchNoteFromIssue - Error : ${error.message}`);
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -323,9 +323,8 @@ async function updateIssue(projectId, issueIid) {
 		});
 	} catch (error) {
 		logToConsole(`❌ updateIssue - Error : ${error.message}`);
-
-		return null;
 	}
+	return null;
 }
 
 /**
@@ -339,7 +338,7 @@ async function fetchRepository(projectName) {
 	)}`;
 
 	try {
-		let response = await fetch(url, {
+		const response = await fetch(url, {
 			method: "GET",
 
 			headers: {
@@ -352,7 +351,7 @@ async function fetchRepository(projectName) {
 			throw new Error(`Erreur API: ${response.statusText}`);
 		}
 
-		let projects = await response.json();
+		const projects = await response.json();
 
 		if (projects.length === 0) {
 			logToConsole("❌ Aucun dépôt trouvé.");
@@ -362,6 +361,6 @@ async function fetchRepository(projectName) {
 		return projects;
 	} catch (error) {
 		console.error("❌ Erreur lors de la recherche du dépôt:", error);
-		return null;
 	}
+	return null;
 }

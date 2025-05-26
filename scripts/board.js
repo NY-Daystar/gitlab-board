@@ -9,20 +9,20 @@ async function createBoard(boardName) {
 		return;
 	}
 
-	let response = await postBoard(boardName);
+	const response = await postBoard(boardName);
 
 	if (response.ok) {
-		let board = await response.json();
+		const board = await response.json();
 
 		await updateBoard(board.id);
 
 		config.board = board.id;
-		let boardEl = document.querySelector("#board-selector");
+		const boardEl = document.querySelector("#board-selector");
 		await loadBoards(boardEl);
 		boardEl.value = board.id;
 
-		for (let milestone of DEFAULT_MILESTONES) {
-			let name = `${board.name} - ${milestone}`;
+		for (const milestone of DEFAULT_MILESTONES) {
+			const name = `${board.name} - ${milestone}`;
 			await createMilestone(board.id, name);
 		}
 
@@ -43,12 +43,12 @@ async function setBoardSelected(id) {
 
 	generateBoardLink(config.board);
 
-	let boardLists = await fetchMilestones(id);
+	const boardLists = await fetchMilestones(id);
 	const milestoneSelector = document.querySelector("#milestoneTable tbody");
 	milestoneSelector.innerHTML = ""; // Reset table
 
-	for (let list of boardLists) {
-		let milestone = list.milestone;
+	for (const list of boardLists) {
+		const milestone = list.milestone;
 		const row = document.createElement("tr");
 		row.innerHTML = `
                 <td>${milestone.id}</td>
@@ -63,8 +63,8 @@ async function setBoardSelected(id) {
 	// Add milestones in issue's list
 	const issueSelector = document.getElementById("issue-selector");
 	issueSelector.innerHTML = "";
-	for (let list of boardLists) {
-		let milestone = list.milestone;
+	for (const list of boardLists) {
+		const milestone = list.milestone;
 		const row = document.createElement("option");
 		row.innerHTML = milestone.title;
 		row.value = milestone.id;
@@ -78,31 +78,30 @@ async function setBoardSelected(id) {
  */
 async function setIssueBoardSelected(id) {
 	config.board = id;
-	let boardLists = await fetchMilestones(id);
+	const boardLists = await fetchMilestones(id);
 	const milestoneSelector = document.querySelector(
 		"#issue-milestone-selector"
 	);
 	milestoneSelector.innerHTML = "";
 
 	// default option
-	let row = document.createElement("option");
-	row.setAttribute("value", 0);
-	row.append("ALL");
-	milestoneSelector.appendChild(row);
-	for (let list of boardLists) {
-		let milestone = list.milestone;
-		let row = document.createElement("option");
+	const option = document.createElement("option");
+	option.setAttribute("value", 0);
+	option.append("ALL");
+	milestoneSelector.appendChild(option);
+	for (const list of boardLists) {
+		const milestone = list.milestone;
+		const row = document.createElement("option");
 		row.setAttribute("value", milestone.id);
 		row.append(milestone.title);
 		milestoneSelector.appendChild(row);
 	}
 
 	// Add milestones in issue's list
-
 	const issueSelector = document.getElementById("issue-selector");
 	issueSelector.innerHTML = "";
-	for (let list of boardLists) {
-		let milestone = list.milestone;
+	for (const list of boardLists) {
+		const milestone = list.milestone;
 		const row = document.createElement("option");
 		row.innerHTML = milestone.title;
 		row.value = milestone.id;
@@ -117,8 +116,8 @@ async function setIssueBoardSelected(id) {
  */
 
 async function generateBoardLink(id) {
-	let board = await fetchBoardById(id);
-	let url = `${board.group.web_url}/-/boards/${id}`;
+	const board = await fetchBoardById(id);
+	const url = `${board.group.web_url}/-/boards/${id}`;
 	const boardLink = document.getElementById("board-link");
 	boardLink.setAttribute("href", url);
 	if (boardLink.hasAttribute("href")) {
@@ -130,15 +129,41 @@ async function generateBoardLink(id) {
  * Generate buttons to delete a milestone
  */
 function addDeleteButtons() {
-	let deleteButtons = document.querySelectorAll(".actions-cell");
+	const deleteButtons = document.querySelectorAll(".actions-cell");
 
-	for (var i = 0, len = deleteButtons.length; i < len; i++) {
-		deleteButtons[i].addEventListener("click", function () {
-			let id = this.getAttribute("milestone-id");
+	for (let i = 0, len = deleteButtons.length; i < len; i++) {
+		deleteButtons[i].addEventListener("click", () => {
+			async function closeMilestone(milestoneId, milestoneName) {
+				logToConsole(
+					`Delete of milestone ${milestoneName} (id: ${milestoneId})`
+				);
 
-			let name = this.getAttribute("milestone-name");
+				const confirmed = customConfirm(
+					`Do you want to delete milestone ${milestoneName}`
+				);
+				if (!confirmed) return;
 
-			closeMilestone(id, name);
+				await deleteMilestone(milestoneId)
+					.then(_ => {
+						setBoardSelected(
+							document.querySelector(
+								"#board-selector option:checked"
+							).value
+						);
+						showToast(`Milestone '${milestoneName}' deleted`);
+						logToConsole(`🛠 Milestone '${milestoneName}' deleted.`);
+					})
+					.catch(error => {
+						logToConsole(
+							`deleteMilestone - Exception raised: ${error}`
+						);
+					});
+			}
+
+			closeMilestone(
+				this.getAttribute("milestone-id"),
+				this.getAttribute("milestone-name")
+			);
 		});
 	}
 }

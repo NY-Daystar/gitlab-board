@@ -14,7 +14,7 @@ async function createMilestone(boardId, milestone, suffix) {
 		milestone = `${milestone} - ${suffix}`;
 	}
 
-	let milestoneId = await postMilestone(milestone);
+	const milestoneId = await postMilestone(milestone);
 	if (!milestoneId) {
 		logToConsole("❌ No milestone id to associate to the board");
 	}
@@ -31,16 +31,16 @@ async function createMilestone(boardId, milestone, suffix) {
  * @param {string} suffix suffix name to milestone
  */
 async function createMilestones(boardId, suffix) {
-	let projects = DEFAULT_PROJECTS;
+	const projects = DEFAULT_PROJECTS;
 
-	let confirmed = confirm(
+	const confirmed = customConfirm(
 		`Do you want to create following milestones \n- ${projects.join(
 			"\n- "
 		)}`
 	);
 	if (!confirmed) return;
 
-	for (let project of projects) {
+	for (const project of projects) {
 		await createMilestone(boardId, project, suffix);
 	}
 }
@@ -53,11 +53,11 @@ async function createMilestones(boardId, suffix) {
  */
 async function setMilestoneSelected(milestoneId, milestoneName) {
 	showLoader();
-	let issuesList;
+	let issuesList = null;
 
 	// If milestone named "ALL" then we fetch issues of all milestone
-	if (milestoneName == "ALL") {
-		let milestoneNames = Array.from(
+	if (milestoneName === "ALL") {
+		const milestoneNames = Array.from(
 			document.querySelectorAll("#issue-milestone-selector option")
 		)
 			.filter(
@@ -72,7 +72,7 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 		issuesList = await (
 			await Promise.all(
 				milestoneNames.map(async m => {
-					let issues = await fetchIssues(m);
+					const issues = await fetchIssues(m);
 					return issues;
 				})
 			)
@@ -84,12 +84,12 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 	config.milestone = milestoneId;
 	if (!issuesList) return;
 
-	let issueTable = document.querySelector("#issue-list tbody");
+	const issueTable = document.querySelector("#issue-list tbody");
 	issueTable.innerHTML = "";
 
 	let issues = await Promise.all(
 		issuesList.map(async issue => {
-			let note = await fetchNoteFromIssue(issue.project_id, issue.iid);
+			const note = await fetchNoteFromIssue(issue.project_id, issue.iid);
 
 			if (note) {
 				issue.branch = extractBranchFromNote(note.body);
@@ -118,7 +118,9 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 				}
 
 				if (!issue.branch) issue.branch = issue.mr.source_branch;
-			} catch (ex) {}
+			} catch (ex) {
+				logToConsole("❌ No MR in issue");
+			}
 
 			issue.projectUrl = extractProjectUrlFromIssueUrl(issue.web_url);
 			issue.projectName = extractProjectNameFromIssueUrl(issue.web_url);
@@ -130,12 +132,12 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 	issues = issues.sort((a, b) => a.projectName.localeCompare(b.projectName));
 
 	issues = issues
-		.filter(i => i.state == "opened")
-		.concat(issues.filter(i => i.state != "opened"));
+		.filter(i => i.state === "opened")
+		.concat(issues.filter(i => i.state !== "opened"));
 
 	// Create table
-	for (let issue of issues) {
-		let row = document.createElement("tr");
+	for (const issue of issues) {
+		const row = document.createElement("tr");
 		row.setAttribute("id", issue.id);
 		row.setAttribute("iid", issue.iid);
 		row.setAttribute("projectid", issue.project_id);
@@ -167,7 +169,7 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
             <td>
                 ${
 					issue.state === "closed"
-						? `<button class="state-closed">Clôturé</button>`
+						? '<button class="state-closed">Closed</button>'
 						: `<button class="state-opened close-issue" iid=${issue.iid} project="${issue.project_id}">Clôturer</button>`
 				}
             </td>
@@ -178,30 +180,6 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 
 	hideLoader();
 	addCloseIssuesButtons();
-}
-
-/**
- * Delete milestone with specific id, ask confirm before deleting
- * @param {int} milestoneId id of milestone to delete
- * @param {name} milestoneName milestone's name
- */
-async function closeMilestone(milestoneId, milestoneName) {
-	logToConsole(`Delete of milestone ${milestoneName} (id: ${milestoneId})`);
-
-	let confirmed = confirm(`Do you want to delete milestone ${milestoneName}`);
-	if (!confirmed) return;
-
-	await deleteMilestone(milestoneId)
-		.then(_ => {
-			setBoardSelected(
-				document.querySelector("#board-selector option:checked").value
-			);
-			showToast(`Milestone '${milestoneName}' deleted`);
-			logToConsole(`🛠 Milestone '${milestoneName}' deleted.`);
-		})
-		.catch(error => {
-			logToConsole(`deleteMilestone - Exception raised: ${error}`);
-		});
 }
 
 /**

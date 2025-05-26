@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	document.getElementById("project-version").textContent = PROJECT_VERSION;
 
 	logToConsole("Authenticate");
-	let checked = await authenticate();
+	const checked = await authenticate();
 	logToConsole("Fin authentification");
 
 	if (!checked) return;
@@ -40,7 +40,7 @@ async function loadData() {
 		document.getElementById("issue-milestone-selector").value =
 			config.milestone;
 
-		let milestone = document.querySelector(
+		const milestone = document.querySelector(
 			"#issue-milestone-selector option:checked"
 		);
 
@@ -55,10 +55,10 @@ async function loadData() {
 async function loadBoards(element) {
 	element.innerHTML = ""; // Reset options
 
-	let boards = await fetchBoards();
+	const boards = await fetchBoards();
 
 	for (const board of boards) {
-		let row = document.createElement("option");
+		const row = document.createElement("option");
 		row.setAttribute("value", board.id);
 		row.append(board.name);
 		element.append(row);
@@ -92,8 +92,8 @@ function setTab() {
 	if (!config.currentTab) return;
 
 	const buttons = Array.from(document.querySelectorAll(".tab-button"));
-	var button = buttons.find(
-		btn => btn.getAttribute("data-tab") == config.currentTab
+	const button = buttons.find(
+		btn => btn.getAttribute("data-tab") === config.currentTab
 	);
 	if (!button) return;
 
@@ -104,7 +104,7 @@ function setTab() {
  * Handle display debug mode
  */
 function handleDebug() {
-	let debugMode = config.debug;
-	let consoleDiv = document.getElementById("consoleLog");
+	const debugMode = config.debug;
+	const consoleDiv = document.getElementById("consoleLog");
 	if (!debugMode) consoleDiv.style.display = "none";
 }

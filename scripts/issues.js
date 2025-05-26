@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-	let issueSelector = document.getElementById("issue-selector");
+	const issueSelector = document.getElementById("issue-selector");
 	const issueCreateBtn = document.getElementById("issue-create");
 	const resetBtn = document.getElementById("reset-projects");
 	const milestoneValuesList = document.getElementById("selectedValues");
@@ -12,12 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		);
 	});
 
-	issueCreateBtn.addEventListener("click", async () => {
-		let milestoneSelected = Array.from(issueSelector.selectedOptions).map(
+	issueCreateBtn.addEventListener("click", () => {
+		const milestoneSelected = Array.from(issueSelector.selectedOptions).map(
 			option => option.value
 		);
 
-		let priority = document.querySelector(
+		const priority = document.querySelector(
 			'input[name="priority"]:checked'
 		).value;
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		milestoneSelected.forEach(milestoneId => {
-			let milestoneName = document.querySelector(
+			const milestoneName = document.querySelector(
 				`#issue-selector > option[value="${milestoneId}"]`
 			).textContent;
 			const li = document.createElement("li");
@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			milestoneValuesList.appendChild(li);
 		});
 
-		let issueName = document.getElementById("issue-name").value;
-		let milestones = getMilestones();
+		const issueName = document.getElementById("issue-name").value;
+		const milestones = getMilestones();
 
 		createIssues(milestones, issueName, priority)
 			.then(_ => {
@@ -78,7 +78,7 @@ async function createIssues(milestones, issue, priority) {
 		throw msg;
 	}
 
-	for (let milestone of milestones) {
+	for (const milestone of milestones) {
 		await createIssue(milestone, issue, priority);
 	}
 	return true;
@@ -103,7 +103,12 @@ async function createIssue(milestone, issue, priority) {
 		gitlabProject = PRJ;
 	}
 
-	let result = await postIssue(gitlabProject, issue, milestone.id, priority);
+	const result = await postIssue(
+		gitlabProject,
+		issue,
+		milestone.id,
+		priority
+	);
 	return result;
 }
 
@@ -112,10 +117,10 @@ async function createIssue(milestone, issue, priority) {
  * @param {string} projectName name of the project
  * @returns
  */
-async function searchGitLabProject(projectName) {
+function searchGitLabProject(projectName) {
 	return fetchRepository(projectName)
 		.then(projects => {
-			let bestMatch = projects.find(p => p.name == projectName);
+			const bestMatch = projects.find(p => p.name === projectName);
 			logToConsole(
 				`✅ Repo found: ${bestMatch.name} (ID: ${bestMatch.id})`
 			);
@@ -127,23 +132,23 @@ async function searchGitLabProject(projectName) {
 }
 
 /**
- * Generate buttons to close issue
- */
-function addCloseIssuesButtons() {
-	let deleteButtons = document.querySelectorAll(".close-issue");
-	for (var i = 0, len = deleteButtons.length; i < len; i++) {
-		deleteButtons[i].addEventListener("click", deleteIssueEvent);
-	}
-}
-
-/**
  * Event to close issue
  */
 const deleteIssueEvent = ({ target }) => {
-	let iid = target.getAttribute("iid");
-	let projectId = target.getAttribute("project");
+	const iid = target.getAttribute("iid");
+	const projectId = target.getAttribute("project");
 	closeIssue(projectId, iid);
 };
+
+/**
+ * Generate buttons to close issue
+ */
+function addCloseIssuesButtons() {
+	const deleteButtons = document.querySelectorAll(".close-issue");
+	for (let i = 0, len = deleteButtons.length; i < len; i++) {
+		deleteButtons[i].addEventListener("click", deleteIssueEvent);
+	}
+}
 
 /**
  * Close issue
@@ -154,21 +159,21 @@ const deleteIssueEvent = ({ target }) => {
 async function closeIssue(projectId, issueIid) {
 	logToConsole(`Closing issue ${issueIid} (project_id: ${projectId})`);
 
-	let confirmed = confirm(`Do you want to close the issue ?`);
+	const confirmed = customConfirm("Do you want to close the issue ?");
 	if (!confirmed) return;
 
 	await updateIssue(projectId, issueIid)
 		.then(response => {
 			if (response.ok) {
-				let issuesEl = document.getElementById("issue-list");
+				const issuesEl = document.getElementById("issue-list");
 
-				let issueEl = issuesEl.querySelector(
+				const issueEl = issuesEl.querySelector(
 					`tr[projectid="${projectId}"][iid="${issueIid}"]`
 				);
-				let issueCell = issueEl.querySelector(`.issue-cell`);
+				const issueCell = issueEl.querySelector(".issue-cell");
 				issueCell.classList.add("state-closed");
 
-				let btn = issueEl.querySelector(".close-issue");
+				const btn = issueEl.querySelector(".close-issue");
 				btn.classList.remove("state-opened");
 				btn.classList.add("state-closed");
 				btn.textContent = "Closed";

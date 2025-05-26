@@ -2,11 +2,11 @@
  * Load gitlab token and debug mode value from configuration
  */
 function loadParams() {
-	let tokenInput = document.getElementById("token-input");
+	const tokenInput = document.getElementById("token-input");
 	tokenInput.value = config.token;
 
-	let switchDebug = document.getElementById("switch-debug");
-	let debugMode = config.debug;
+	const switchDebug = document.getElementById("switch-debug");
+	const debugMode = config.debug;
 	switchDebug.checked = debugMode;
 }
 
@@ -14,7 +14,7 @@ function loadParams() {
  * Save gitlab token
  */
 function saveToken() {
-	let inputToken = document.getElementById("token-input");
+	const inputToken = document.getElementById("token-input");
 	config.token = inputToken.value;
 	logToConsole("Changement de token");
 
@@ -25,14 +25,14 @@ function saveToken() {
  * Switch between normal mode or debug mode
  */
 function toggleDebug() {
-	let switchDebug = document.getElementById("switch-debug");
+	const switchDebug = document.getElementById("switch-debug");
 	config.debug = switchDebug.checked;
 
 	logToConsole(
 		`Mode débug : ${switchDebug.checked ? "Activé" : "Désactivé"}`
 	);
 
-	let console = document.getElementById("consoleLog");
+	const console = document.getElementById("consoleLog");
 	console.style.display = switchDebug.checked ? "block" : "none";
 }
 
@@ -42,18 +42,18 @@ function toggleDebug() {
  */
 async function loadVersion() {
 	try {
-		let response = await fetch(
+		const response = await fetch(
 			"https://github.com/NY-Daystar/gitlab-board",
 			{
 				headers: { "Private-Token": config.token }
 			}
 		);
 
-		let content = await response.text();
-		let prodVersion = extractVersion(content);
+		const content = await response.text();
+		const prodVersion = extractVersion(content);
 
-		if (compareVersion(PROJECT_VERSION, prodVersion) == -1) {
-			alert(
+		if (compareVersion(PROJECT_VERSION, prodVersion) === -1) {
+			customAlert(
 				`A new version is available\n\tActual version : ${PROJECT_VERSION}\n\tNew version: ${prodVersion}`
 			);
 
@@ -63,6 +63,6 @@ async function loadVersion() {
 		}
 	} catch (error) {
 		logToConsole(`❌ loadVersion : ${error.message}`);
-		return null;
 	}
+	return null;
 }

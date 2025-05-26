@@ -1,10 +1,10 @@
 class Config {
 	constructor() {
-		this.debugMode;
-		this.boardId;
-		this.milestoneId;
-		this.gitlabToken;
-		this.tab;
+		this.debugMode = false;
+		this.boardId = 0;
+		this.milestoneId = 0;
+		this.gitlabToken = "";
+		this.tab = "";
 	}
 
 	/**
@@ -15,19 +15,19 @@ class Config {
 		const cfg = JSON.parse(localStorage.getItem(LS_KEY));
 
 		if (!cfg) {
-			let config = new Config();
+			const config = new Config();
 			config.debug = false;
 			config.token = "";
 			config.tab = "dashboard";
 			return config;
 		}
 
-		let config = new Config();
-		config.debug = cfg["debugMode"];
-		config.board = cfg["boardId"];
-		config.milestone = cfg["milestoneId"];
-		config.token = cfg["gitlabToken"];
-		config.tab = cfg["tab"];
+		const config = new Config();
+		config.debug = cfg.debugMode;
+		config.board = cfg.boardId;
+		config.milestone = cfg.milestoneId;
+		config.token = cfg.gitlabToken;
+		config.tab = cfg.tab;
 		return config;
 	}
 
@@ -84,5 +84,4 @@ class Config {
 	}
 }
 
-var config;
 var config = Config.readConfig();
