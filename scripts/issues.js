@@ -103,7 +103,8 @@ async function createIssue(milestone, issue, priority) {
 		gitlabProject = PRJ;
 	}
 
-	return await postIssue(gitlabProject, issue, milestone.id, priority);
+	let result = await postIssue(gitlabProject, issue, milestone.id, priority);
+	return result;
 }
 
 /**

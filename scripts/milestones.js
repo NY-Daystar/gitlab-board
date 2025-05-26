@@ -71,7 +71,10 @@ async function setMilestoneSelected(milestoneId, milestoneName) {
 
 		issuesList = await (
 			await Promise.all(
-				milestoneNames.map(async m => await fetchIssues(m))
+				milestoneNames.map(async m => {
+					let issues = await fetchIssues(m);
+					return issues;
+				})
 			)
 		).flat();
 	} else {
